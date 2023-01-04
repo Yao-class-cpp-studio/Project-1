@@ -1,6 +1,6 @@
 # Project 1: JSON
 
-<sup><sub>This project is based on [jsoncpp](https://github.com/open-source-parsers/jsoncpp) [1.9.5](https://github.com/open-source-parsers/jsoncpp/releases/tag/1.9.5) licensed under [MIT](https://spdx.org/licenses/MIT.html).</sub></sup>
+<sup><sub>This project is based on [jsoncpp](https://github.com/open-source-parsers/jsoncpp) [1.9.5](https://github.com/open-source-parsers/jsoncpp/releases/tag/1.9.5) licensed under [MIT](https://spdx.org/licenses/MIT.html).</sub></sup>![codecov](https://codecov.io/gh/Yao-class-cpp-studio/project-1-huang-wj/branch/main/graph/badge.svg?token=WCxeJow4Ow)
 
 ## Introduction
 
@@ -62,15 +62,27 @@ to explore how to design a type-safe dynamic library in C++.
 
 ## Tasks (max 100pts)
 
-- [ ] Maintenance (40%pts off if not done): Setup [Codecov](https://about.codecov.io/) for your repository to track the code coverage.
+- [x] Maintenance (40%pts off if not done): Setup [Codecov](https://about.codecov.io/) for your repository to track the code coverage.
     - Check below for instructions.
-- [ ] C++ API (15pts): Define JSON directly in C++ with [User-defined literals](https://en.cppreference.com/w/cpp/language/user_literal).
-- [ ] C++ API (15pts): Support [user-defined conversion](https://en.cppreference.com/w/cpp/language/cast_operator) to primitive types.
+- [x] C++ API (15pts): Define JSON directly in C++ with [User-defined literals](https://en.cppreference.com/w/cpp/language/user_literal).
+    - Example: `R"([1,2,3])"_json`.
+    - Use a string followed by `_json` to define JSON directly.
+    - Don't forget to add `using Json::operator"" _json;` in order to use it, although I have written `JSON_API`.
+- [x] C++ API (15pts): Support [user-defined conversion](https://en.cppreference.com/w/cpp/language/cast_operator) to primitive types.
+    - Example: `static_cast<double>("1.23"_json)`.
+    - Support conversion from `Value` with single data to `Int,UInt,Int64,UInt64,LargestInt,LargestUInt,Float,Double,String,CString,Bool`.
+    - Conversion for `Array,Object` are `std::vector<Json::Value>,std::map<std::string,Json::Value>`, respectively. 
+    - Support explicit conversion for value with single data for safety, and support implicit conversion for `Array,Object` value.
 - [ ] Utility (15pts): Convert from and to [CSV Files](https://datatracker.ietf.org/doc/html/rfc4180).
     - An implementation as simple as comma-separated values suffices.
-- [ ] Feature (30pts): Support string concatenation.
-    - Example: `{"name": "San"+"Zhang"}` should be equivalent to `{"name": "SanZhang"}`.
-    - Concatenation in keys in objects is not required.
+- [ ] Feature (30pts): Allow zero or one [trailing commas](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Trailing_commas) in JSON arrays and objects.
+- [x] Feature (30pts): Support string concatenation.
+    - Example: `{"na"+"me":"San"+"Zh"+"ang",["H"+"W",1]}` is equivalent to `{"name":"SanZhang",["HW",1]}`.
+    - Concatenation in keys in objects, values in objects, values in arrays and single string are all supported.
+    - You can use more than one `+` to concate strings into one.
+    - Any spaces and endlines before and after each `+` are automatically ignored and skipped.
+    - Support concatenation for string with both single quote (when `allowSingleQuotes_=true`) and double quote.
+    - Support string concatenation when parsing both in new way (`CharReader`) and in old way (`Reader`).
 - [ ] Feature (30pts): Add a new type `binary` to represent binary data.
 - [ ] Feature (30pts): Support pointers to share JSON values.
 - [ ] Utility (30pts): [Schema](https://json-schema.org/learn/) validation.
@@ -87,10 +99,8 @@ to explore how to design a type-safe dynamic library in C++.
 - [ ] Performance (50pts): JSON minifier using pointers.
     - Minify the output size of JSON by removing unnecessary characters.
     - You probably want to combine this task with the task of pointer support and string concatenation.
-- [ ] Utility (50pts): Make a terminal UI for easy browsing & editing JSON.
-    - A tree view (or better) interface is required. Use [ncurses](https://invisible-island.net/ncurses/announce.html), [FTXUI](https://github.com/ArthurSonzogni/FTXUI), or something else to prettify the output.
-    - A screenshot of the terminal UI should be included in README.
-    - The libraries should be embedded inside the repository. Don't forget to include the license files!
+- [x] Utility (50pts): Make a terminal UI for easy browsing & editing JSON.
+    - [See README]
 - [ ] Performance (50pts): Add indexing support for JSON to support random read on disk without loading the full file in memory.
     - The index should be stored in the same file.
     - The JSON file should still be able to be parsed correctly with your program.
@@ -156,8 +166,8 @@ Some common techniques include:
 * Only look at the relevant code of a variable / function.
 Use the IDE's "Find Usages" feature, or simply do a global search.
 * Analyze which parts of the project are relevant to the task you are working on,
-and change them accordingly.
-For example, the task `date` might involve:
+  and change them accordingly.
+  For example, the task `date` might involve:
     * Adding a new enum type in `include/value.h`
     * Adding corresponding token and `read*()` parser in `src/lib_json/json_reader.cpp`
     * Adding a `switch` case and `write*()` writer in `src/lib_json/json_writer.cpp`
